@@ -4,6 +4,8 @@ from django.utils import timezone
 import datetime
 
 
+SECONDS = 60
+
 def get_duration(visit):
     if visit.leaved_at is None:
         end_time = timezone.now()
@@ -15,19 +17,21 @@ def get_duration(visit):
 
 
 def format_duration(duration):
-    total_minutes = duration.total_seconds() // 60
-    hours = int(total_minutes // 60)
-    minutes = int(total_minutes % 60)
+    total_minutes = duration.total_seconds() // SECONDS
+    hours = int(total_minutes // SECONDS)
+    minutes = int(total_minutes % SECONDS)
     return f'{hours}:{minutes:02d}'
 
 
-def if_visit_long(visit, minutes=60):
+def check_visit(visit, limit=60):
     long_visits = []
     for visit_time in visit:
-        continues = get_duration(visit_time)
-        minutes_total = continues.total_seconds() / 60
-        if minutes_total > minutes:
-            long_visits.append(visit_time)
+        duration = get_duration(visit_time)
+        minutes_total = duration.total_seconds() / SECONDS
+        if minutes_total > limit:
+            long_visits.append(True)
+        else:
+            long_visits.append(False)
     return long_visits
 
 
@@ -58,3 +62,5 @@ class Visit(models.Model):
                 if self.leaved_at else 'not leaved'
             )
         )
+
+
