@@ -6,19 +6,20 @@ from .models import get_duration, formated_duration
 
 
 def storage_information_view(request):
-    non_closed_visits = {}
     visits = Visit.objects.filter(leaved_at=None)
+    non_closed_visits = []
 
     for visit in visits:
         minutes = get_duration(visit)
         fix_time = formated_duration(minutes)
         name = visit.passcard.owner_name
         entered_at = visit.entered_at
-        non_closed_visits[who_entered] = name
-        non_closed_visits[entered_at] = entered_at
-        non_closed_visits[duration] = duration
-
-
+        non_closed_visit = {
+            'who_entered': name,
+            'entered_at': entered_at,
+            'duration': fix_time
+        }
+        non_closed_visits.append(non_closed_visit)
     context = {
         'non_closed_visits': non_closed_visits,
     }
