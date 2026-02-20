@@ -1,31 +1,24 @@
-from datacenter.models import Passcard
-from datacenter.models import Visit
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
-from .models import get_duration, formated_duration, check_visit
 from django.utils.timezone import localtime
 from django.utils import timezone
 
 
-def passcard_info_view(request, passcode):
-    this_passcard_visits = {}
-    passcard = get_object_or_404(Passcard, passcode=passcode)
-    visits = Visit.objects.filter(passcard=passcard)
+def storage_information_view(request):
+    visits = Visit.objects.filter(leaved_at=None)
+    non_closed_visits = []
 
     for visit in visits:
-        leaved_at = visit.leaved_at
-        if leaved_at == None:
-            leaved_at = timezone.now()
-        count  = localtime(visit.leaved_at) - localtime(visit.entered_at)
-        fix_time = formated_duration(count)
-        check = check_visit(visit)
-        this_passcard_visits[entered_at] = visit.entered_at
-        this_passcard_visits[duration] = duration
-        this_passcard_visits[is_strange] = check
+        minutes = get_duration(visit)
+        fix_time = formated_duration(minutes)
+        name = visit.passcard.owner_name
+        entered_at = visit.entered_at
+        non_closed_visit = {
+            'who_entered': name,
+            'entered_at': entered_at,
+            'duration': fix_time
+        }
+        non_closed_visits.append(non_closed_visit)
 
     context = {
-        'passcard': passcard,
-        'this_passcard_visits': this_passcard_visits
+        'non_closed_visits': non_closed_visits,
     }
-
-    return render(request, 'passcard_info.html', context)
+    return render(request, 'storage_information.html', context)
