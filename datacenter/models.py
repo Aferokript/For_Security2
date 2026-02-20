@@ -16,7 +16,7 @@ def get_duration(visit):
     return counted_time
 
 
-def format_duration(duration):
+def formated_duration(duration):
     total_minutes = duration.total_seconds() // SECONDS
     hours = int(total_minutes // SECONDS)
     minutes = int(total_minutes % SECONDS)
@@ -24,16 +24,11 @@ def format_duration(duration):
 
 
 def check_visit(visit, limit=60):
-    long_visits = []
-    for visit_time in visit:
-        duration = get_duration(visit_time)
-        minutes_total = duration.total_seconds() / SECONDS
-        if minutes_total > limit:
-            long_visits.append(True)
-        else:
-            long_visits.append(False)
-    return long_visits
-
+    inside_time = get_duration(visit)
+    minutes = inside_time.total_seconds() // SECONDS
+    if minutes > limit:
+        return False
+    return True
 
 class Passcard(models.Model):
     is_active = models.BooleanField(default=False)
