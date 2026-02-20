@@ -26,9 +26,7 @@ def formated_duration(duration):
 def check_visit(visit, limit=60):
     inside_time = get_duration(visit)
     minutes = inside_time.total_seconds() // SECONDS
-    if minutes > limit:
-        return False
-    return True
+    return minutes <= limit
 
 class Passcard(models.Model):
     is_active = models.BooleanField(default=False)
@@ -57,5 +55,3 @@ class Visit(models.Model):
                 if self.leaved_at else 'not leaved'
             )
         )
-
-
